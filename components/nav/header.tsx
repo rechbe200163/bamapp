@@ -24,13 +24,9 @@ export default Header;
 
 const styles = StyleSheet.create({
   wrapper: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 60,
-    paddingHorizontal: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingHorizontal: 20,
     alignItems: 'center',
   },
   leftInfo: {
