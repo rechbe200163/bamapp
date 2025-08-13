@@ -19,6 +19,15 @@ export interface Game {
   scoreSystem?: string;
   gameTheme?: string;
   variants?: Variant[];
+} // lib/types.ts
+export type GameType = 'chess' | 'beerpong' | 'mensch' | 'hit8';
+export interface Game {
+  id: number;
+  title: string;
+  description: string;
+  imagePath: string; // kannst du künftig entfernen, wenn du keine Bilder mehr brauchst
+  gameTheme?: string;
+  type?: GameType;
 }
 
 export type Color = `#${string}`;

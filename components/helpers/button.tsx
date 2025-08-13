@@ -1,26 +1,61 @@
-import { StyleProp, Text, TouchableOpacity, ViewStyle } from 'react-native';
+import {
+  Pressable,
+  StyleProp,
+  Text,
+  TouchableOpacity,
+  ViewStyle,
+} from 'react-native';
 import React from 'react';
+import { cn } from '@/lib/utils/utils';
+import { StyleSheet } from 'react-native';
 
 interface ButtonProps {
   title: string;
-  className?: string; // Button-Styles
-  textClassName?: string; // Text-Styles separat
+  disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   onPress: () => void;
 }
 
-const Button = ({
+const CustomButton = ({
   title,
   onPress,
   style,
-  className = 'p-2 rounded-2xl',
-  textClassName = 'text-white text-lg font-semibold',
+  disabled = true,
 }: ButtonProps) => {
+  console.log({ style });
   return (
-    <TouchableOpacity onPress={onPress} className={className} style={style}>
-      <Text className={textClassName}>{title}</Text>
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={disabled}
+      style={[styles.button, disabled && styles.buttonDisabled, style]}
+    >
+      <Text style={styles.textStyle}>{title}</Text>
     </TouchableOpacity>
   );
 };
 
-export default Button;
+export default CustomButton;
+
+const styles = StyleSheet.create({
+  button: {
+    minWidth: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    elevation: 8,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+    elevation: 0,
+  },
+  buttonPressed: {
+    transform: [{ scale: 0.95 }],
+  },
+  textStyle: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});

@@ -7,12 +7,21 @@ import { useSharedValue } from 'react-native-reanimated';
 import Carousel from 'react-native-reanimated-carousel';
 import { useHaptic } from '@/hooks/useHaptic';
 import { useGameThemeStore } from '@/lib/stores/useGameTheme';
+import { useEffect, useState } from 'react';
+import { useSelectedGameNameStore } from '@/lib/stores/useGameStore';
+import { ScreenStackHeaderBackButtonImage } from 'react-native-screens';
 
 const { width: screenWidth } = Dimensions.get('window');
-function GamesCarousel() {
+
+type GamesCarouselProps = {
+  sendDataToParent: (gameId: number) => void;
+};
+
+function GamesCarousel({ sendDataToParent }: GamesCarouselProps) {
   const scrollOffsetValue = useSharedValue<number>(0);
   const hapticSelection = useHaptic('success');
   const setGameTheme = useGameThemeStore((state) => state.setGameTheme);
+  const setGameName = useSelectedGameNameStore((state) => state.setGameName);
 
   const gameImages: Record<string, any> = {
     'chess.jpg': require('@/assets/images/games/chess.jpg'),
@@ -20,6 +29,15 @@ function GamesCarousel() {
     'beer-pong.jpg': require('@/assets/images/games/beer-pong.jpg'),
     'mensch-aergere-dich-nicht.jpg': require('@/assets/images/games/mensch-aerger-dich-nicht.jpg'),
   };
+
+  useEffect(() => {
+    // Initial: erstes Spiel setzen
+    if (games.length > 0) {
+      sendDataToParent(games[0].id);
+      setGameTheme(games[0].gameTheme || '#000000');
+      setGameName(games[0].title || '');
+    }
+  }, []);
 
   return (
     <View id='carousel-component'>
@@ -29,7 +47,7 @@ function GamesCarousel() {
         width={screenWidth}
         autoPlay={false}
         autoPlayInterval={2000}
-        height={400}
+        height={250}
         snapEnabled={true}
         pagingEnabled={true}
         data={games}
@@ -44,16 +62,10 @@ function GamesCarousel() {
           parallaxScrollingOffset: 50,
           parallaxAdjacentItemScale: 0.75,
         }}
-        onScrollStart={() => {
-          console.log('Scroll start');
-        }}
-        onScrollEnd={(index: number) => {
-          console.log('Scroll end');
-        }}
         onSnapToItem={(index: number) => {
           setGameTheme(games[index].gameTheme || '#000000');
-          console.log('Game theme set to:', games[index].gameTheme);
-          console.log('current index:', games[index].imagePath);
+          setGameName(games[index].title || '');
+          sendDataToParent(games[index].id);
           if (Platform.OS !== 'web') {
             if (hapticSelection) {
               hapticSelection();
