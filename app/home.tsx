@@ -1,24 +1,25 @@
-import { View, Text, StyleSheet } from 'react-native';
 import React, { useCallback, useRef, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import GamesCarousel from '@/components/games/GamesCarousel';
-import CustomButton from '@/components/helpers/button';
 import { useGameThemeStore } from '@/lib/stores/useGameTheme';
-import QuickStatsSelectedGame from '@/components/stats/QuickStatsSelectedGame';
-import Header from '@/components/nav/header';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Link, useRouter } from 'expo-router';
+import BoardPager from '@/components/backgrounds/BoardPager';
+import { useSelectedGameNameStore } from '@/lib/stores/useGameStore';
+import { games } from '@/lib/mock-data/games';
 
 const index = () => {
-  const router = useRouter();
-  const gameTheme = useGameThemeStore((state) => state.color);
-  const [dataFromChild, setDataFromChild] = useState<number | null>(null);
+  const [selectedGameId, setSelectedGameId] = useState<number | null>(null);
 
-  function handleDataFromChild(data: number) {
-    setDataFromChild(data);
-  }
+  const setGameTheme = useGameThemeStore((state) => state.setGameTheme);
+  const setGameName = useSelectedGameNameStore((state) => state.setGameName);
 
-  return <GamesCarousel sendDataToParent={handleDataFromChild} />;
+  return (
+    <BoardPager
+      games={games as any}
+      onSelected={(g) => {
+        setSelectedGameId(g.id);
+        setGameTheme(g.gameTheme || '#000');
+        setGameName(g.title);
+      }}
+    />
+  );
 };
 
 export default index;
